@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lack</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            font-family: "Segoe UI"
+        }
+
+        .chat_container {
+            width: 60vw;
+            height: calc(100vh - 16px);
+            background-color: #e7e7e7;
+            margin-left: 20vw;
+            margin-right: 20vw;
+            padding: 8px;
+        }
+
+        #input-form {
+            position: absolute;
+            bottom: 0;
+            justify-self: center;
+        }
+
+        .password {
+            width: 4ch;
+            height: 4ch;
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            padding: 0;
+        }
+        .identity {
+            width: 4ch;
+            height: 4ch;
+            position: absolute;
+            right: calc(4ch + 16px);
+            top: 8px;
+            padding: 0;
+        }
+
+        input[type="text"] {
+            all: unset;
+            background-color: #d4d4d4;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat_container">
+        <div id="input-form">
+            <input type="text" id="message-input" autocomplete="off" spellcheck="false">
+            <button type="submit" onclick="send_message()">using</button>
+        </div>
+    </div>
+
+    <button class="identity" onclick="set_identity()">🙎🏿‍♂️</button>
+    <button class="password" onclick="set_encryption()">🔑</button>
+
+    <script>
+        var encryption_key = "";
+        var identity = "";
+        var message_input = document.getElementById("message-input");
+
+        function set_identity() {
+            let new_identity = prompt("daj nowe");
+            if (new_identity.length > 24) {
+                alert("pojebało");
+                return 0
+            }
+            identity = new_identity;
+            alert(`zapisano nowe: `)
+        }
+
+        function set_encryption() {
+            let new_key = prompt("daj nowy");
+            if (new_key.length < 6) {
+                alert(`sześć (6) znaków minimum (${new_key.length}/6)`);
+                return 0
+            }
+            encryption_key = new_key;
+            alert(`uwaga zapisano nowy: ${"*".repeat(encryption_key.length - 3).concat(encryption_key.slice(-3))}`);
+            return 0
+        }
+
+        function escape_html (string) {
+            return string
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        }
+
+        function send_message(text) {
+            message_input.value = "";
+            if (text === "") {
+                return 0
+            }
+            fetch("back.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    message: text,
+                })
+            })
+        }
+
+        function handle_keypress(event) {
+            if (event.key === "Enter") {
+                send_message(message_input.value);
+            }
+        }
+        document.body.addEventListener("keypress", handle_keypress);
+
+    </script>
+</body>
+</html>
