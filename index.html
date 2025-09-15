@@ -29,18 +29,20 @@
         }
 
         .password {
-            width: 4ch;
-            height: 4ch;
+            font-size: large;
+            width: 6ch;
+            height: 6ch;
             position: absolute;
             right: 8px;
             top: 8px;
             padding: 0;
         }
         .identity {
-            width: 4ch;
-            height: 4ch;
+            font-size: large;
+            width: 6ch;
+            height: 6ch;
             position: absolute;
-            right: calc(4ch + 16px);
+            right: calc(6ch + 16px);
             top: 8px;
             padding: 0;
         }
@@ -111,7 +113,10 @@ function set_identity() {
         return 0
     }
     identity = new_identity;
-    alert(`zapisano nowe: ${identity}`)
+    alert(`zapisano nowe: ${identity}`);
+    fetch("back.php", {
+        
+    })
 }
 
 function set_encryption() {
@@ -201,6 +206,21 @@ function fetch_messages() {
 }
 
 setInterval(fetch_messages, 100);
+
+fetch("back.php", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+        ask_for_identity: true
+    })
+})
+.then(res => res.json())
+.then(data => {
+    if
+})
+
 set_identity();
 
 </script>

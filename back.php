@@ -30,6 +30,21 @@ $identity = isset($_POST["identity"]) ? $_POST["identity"] : null;
 $message = isset($_POST["message"]) ? $_POST["message"] : null;
 $password = isset($_POST["password"]) ? $_POST["password"] : null;
 $last_id = isset($_POST["last_id"]) ? intval($_POST["last_id"]) : 0;
+$asks_for_identity = isset($_POST["ask_for_identity"]) ? true : false;
+
+if ($identity && !isset($_SESSION["identity"])) {
+    $_SESSION["identity"] = $identity;
+}
+
+if ($asks_for_identity) {
+    if (isset($_SESSION["identity"])) {
+        echo(json_encode(["identity" => $_SESSION["identity"]]));
+        die();
+    } else {
+        echo(json_encode(["error" => "no identity"]));
+        die();
+    }
+}
 
 $db = new PDO('sqlite:' . MESSAGES_FILE);
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -68,6 +83,4 @@ if (!$message && $password) {
     echo json_encode($rows, JSON_PRETTY_PRINT);
     exit;
 }
-
-echo json_encode(["status" => "no_action"]);
 ?>
