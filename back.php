@@ -32,7 +32,7 @@ $password = isset($_POST["password"]) ? $_POST["password"] : null;
 $last_id = isset($_POST["last_id"]) ? intval($_POST["last_id"]) : 0;
 $asks_for_identity = isset($_POST["ask_for_identity"]) ? true : false;
 
-if ($identity && !isset($_SESSION["identity"])) {
+if ($identity) {
     $_SESSION["identity"] = $identity;
 }
 
@@ -56,13 +56,13 @@ $db->exec("CREATE TABLE IF NOT EXISTS messages (
     timestamp INTEGER NOT NULL
 )");
 
-if ($identity && $message && $password) {
+if ($_SESSION["identity"] && $message && $password) {
     $encrypted = encrypt_message($message, $password);
 
 
     $stmt = $db->prepare("INSERT INTO messages (identity, message, timestamp) VALUES (:identity, :message, :timestamp)");
     $stmt->execute([
-        ':identity' => $identity,
+        ':identity' => $_SESSION["identity"],
         ':message' => $encrypted,
         ':timestamp' => time()
     ]);

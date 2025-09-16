@@ -108,6 +108,7 @@ var last_id = 0;
 
 function set_identity() {
     let new_identity = prompt("daj imię");
+    if (new_identity == undefined) return 0
     if (new_identity.length > 24) {
         alert("pojebało");
         return 0
@@ -115,12 +116,19 @@ function set_identity() {
     identity = new_identity;
     alert(`zapisano nowe: ${identity}`);
     fetch("back.php", {
-        
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+            identity: identity,
+        })
     })
 }
 
 function set_encryption() {
     let new_key = prompt("daj nowy");
+    if (new_key == undefined) return 0
     if (new_key.length < 4) {
         alert(`cztery (4) znaki minimum (${new_key.length}/4)`);
         return 0
@@ -152,7 +160,6 @@ function send_message(text) {
             "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
-            identity: identity,
             message: text,
             password: encryption_key
         })
@@ -218,10 +225,12 @@ fetch("back.php", {
 })
 .then(res => res.json())
 .then(data => {
-    if
+    if (data.hasOwnProperty("identity")) {
+        identity = data.identity;
+    } else {
+        set_identity();
+    }
 })
-
-set_identity();
 
 </script>
 
