@@ -19,7 +19,9 @@
             margin-right: 20vw;
             padding: 8px;
             overflow-y: scroll;
-
+        }
+        .chat_container--dark {
+            background-color: #181818;
         }
 
         #input-form {
@@ -46,13 +48,26 @@
             top: 8px;
             padding: 0;
         }
+        .theme {
+            font-size: large;
+            width: 6ch;
+            height: 6ch;
+            position: absolute;
+            right: calc(12ch + 24px);
+            top: 8px;
+            padding: 0;
+        }
 
-        input[type="text"] {
+        .text_input {
             all: unset;
             background-color: #d4d4d4;
             cursor: default;
             padding: 12px;
             width: 64ch;
+        }
+        .text_input--dark {
+            background-color: #2b2b2b;
+            color: #fff;
         }
 
         button[type="submit"] {
@@ -75,11 +90,18 @@
             border-radius: 8px;
             max-width: 80%;
         }
+        .chat_message--dark {
+            background: #2b2b2b;
+            color: #fff;
+        }
 
         .chat_header {
             font-size: 0.75em;
             color: #555;
             margin-bottom: 2px;
+        }
+        .chat_header--dark {
+            color: #aaa;
         }
     </style>
 </head>
@@ -88,20 +110,24 @@
     <div class="chat_container" id="chat">
         <div id="messages"></div>
         <div id="input-form">
-            <input type="text" id="message-input" autocomplete="off" spellcheck="false">
+            <input class="text_input" type="text" id="message-input" autocomplete="off" spellcheck="false">
             <button type="submit" onclick="send_message(message_input.value)">wyślij</button>
         </div>
     </div>
 
+    <button id="theme" class="theme" onclick="toggle_theme()">⚪</button>
     <button class="identity" onclick="set_identity()">🙎🏿‍♂️</button>
     <button class="password" onclick="set_encryption()">🔑</button>
 
 <script>
+
 var encryption_key = "default";
 var identity = "konformista";
 var chat_container = document.getElementById("chat");
 var message_input = document.getElementById("message-input");
 var messages_div = document.getElementById("messages");
+var theme_btn = document.getElementById("theme");
+var is_black_theme = false;
 
 var messages = [];
 var last_id = 0;
@@ -140,6 +166,32 @@ function set_encryption() {
     return 0
 }
 
+function toggle_theme() {
+    is_black_theme = !is_black_theme;
+    if (is_black_theme) {
+        theme_btn.innerText = "⚫";
+        document.body.style.backgroundColor = "#000";
+        chat_container.classList.add("chat_container--dark");
+        message_input.classList.add("text_input--dark");
+        for (let message of document.getElementsByClassName("chat_message")) {
+            message.classList.add("chat_message--dark");
+        }
+        for (let header of document.getElementsByClassName("chat_header")) {
+            header.classList.add("chat_header--dark");
+        }
+    } else {
+        theme_btn.innerText = "⚪";
+        document.body.style.backgroundColor = "initial";
+        chat_container.classList.remove("chat_container--dark");
+        message_input.classList.remove("text_input--dark");
+        for (let message of document.getElementsByClassName("chat_message")) {
+            message.classList.remove("chat_message--dark");
+        }
+        for (let header of document.getElementsByClassName("chat_header")) {
+            header.classList.remove("chat_header--dark");
+        }
+    }
+}
 function escape_html(string) {
     return string
         .replace(/&/g, "&amp;")
@@ -198,6 +250,11 @@ function fetch_messages() {
                 let header = document.createElement("div");
                 header.className = "chat_header";
                 header.textContent = `${msg.identity || "konformista"}, ${new Date(msg.timestamp * 1000).toLocaleString("pl-PL")}`;
+
+                if (is_black_theme) {
+                    wrapper.classList.add("chat_message--dark");
+                    header.classList.add("chat_header--dark");
+                }
 
                 let body = document.createElement("div");
                 body.textContent = msg.message;
