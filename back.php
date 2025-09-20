@@ -19,11 +19,7 @@ function decrypt_message($message, $password) {
     $iv = substr($data, 0, 16);
     $encrypted = substr($data, 16);
     $result = openssl_decrypt($encrypted, "AES-256-CBC", $key, 0, $iv);
-    if ($result == false) {
-        return "errorerrorerror618734067";
-    } else {
-        return $result;
-    }
+    return $result;
 }
 
 $identity = isset($_POST["identity"]) ? $_POST["identity"] : null;
@@ -78,6 +74,10 @@ if (!$message && $password) {
 
     foreach ($rows as &$row) {
         $row['message'] = decrypt_message($row['message'], $password);
+        $row["success"] = $row['message'] !== false;
+        if (!$row["success"]) {
+            $row["identity"] = "";
+        }
     }
 
     echo json_encode($rows, JSON_PRETTY_PRINT);

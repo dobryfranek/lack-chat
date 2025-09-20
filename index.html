@@ -163,6 +163,7 @@ function set_encryption() {
     alert(`uwaga zapisano nowy: ${"*".repeat(encryption_key.length - 3).concat(encryption_key.slice(-3))}`);
     messages = [];
     messages_div.innerHTML = "";
+    last_id = 0;
     return 0
 }
 
@@ -240,25 +241,26 @@ function fetch_messages() {
     .then(res => res.json())
     .then(data => {
         if (Array.isArray(data) && data.length > 0) {
+            console.log(data);
             data.forEach(msg => {
-                messages.push(msg);
                 last_id = msg.id;
+                if (msg.success === true) {
+                    messages.push(msg);
 
-                let wrapper = document.createElement("div");
-                wrapper.className = "chat_message";
+                    let wrapper = document.createElement("div");
+                    wrapper.className = "chat_message";
 
-                let header = document.createElement("div");
-                header.className = "chat_header";
-                header.textContent = `${msg.identity || "konformista"}, ${new Date(msg.timestamp * 1000).toLocaleString("pl-PL")}`;
+                    let header = document.createElement("div");
+                    header.className = "chat_header";
+                    header.textContent = `${msg.identity || "konformista"}, ${new Date(msg.timestamp * 1000).toLocaleString("pl-PL")}`;
 
-                if (is_black_theme) {
-                    wrapper.classList.add("chat_message--dark");
-                    header.classList.add("chat_header--dark");
-                }
+                    if (is_black_theme) {
+                        wrapper.classList.add("chat_message--dark");
+                        header.classList.add("chat_header--dark");
+                    }
 
-                let body = document.createElement("div");
-                body.textContent = msg.message;
-                if (body.textContent !== "errorerrorerror618734067") {
+                    let body = document.createElement("div");
+                    body.textContent = msg.message;
                     wrapper.appendChild(header);
                     wrapper.appendChild(body);
                     messages_div.appendChild(wrapper);
