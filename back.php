@@ -26,7 +26,23 @@ $identity = isset($_POST["identity"]) ? $_POST["identity"] : null;
 $message = isset($_POST["message"]) ? $_POST["message"] : null;
 $password = isset($_POST["password"]) ? $_POST["password"] : null;
 $last_id = isset($_POST["last_id"]) ? intval($_POST["last_id"]) : 0;
-$asks_for_identity = isset($_POST["ask_for_identity"]) ? true : false;
+$asks_for_identity = isset($_POST["ask_for_identity"]);
+$theme = isset($_POST["theme"]) ? $_POST["theme"] : null;
+$asks_for_theme = isset($_POST["ask_for_theme"]);
+
+if (!is_null($theme)) {
+    $_SESSION["theme"] = ($theme === "true" || $theme === "1" || $theme === 1 || $theme === true) ? true : false;
+}
+
+if ($asks_for_theme) {
+    if (isset($_SESSION["theme"])) {
+        echo(json_encode(["theme" => $_SESSION["theme"]]));
+        die();
+    } else {
+        echo(json_encode(["error" => "no theme"]));
+        die();
+    }
+}
 
 if ($identity) {
     $_SESSION["identity"] = $identity;

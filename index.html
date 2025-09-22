@@ -169,6 +169,7 @@ function set_encryption() {
 
 function toggle_theme() {
     is_black_theme = !is_black_theme;
+
     if (is_black_theme) {
         theme_btn.innerText = "⚫";
         document.body.style.backgroundColor = "#000";
@@ -192,6 +193,15 @@ function toggle_theme() {
             header.classList.remove("chat_header--dark");
         }
     }
+    fetch("back.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+            theme: is_black_theme
+    })
+})
 }
 function escape_html(string) {
     return string
@@ -241,7 +251,6 @@ function fetch_messages() {
     .then(res => res.json())
     .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-            console.log(data);
             data.forEach(msg => {
                 last_id = msg.id;
                 if (msg.success === true) {
@@ -288,6 +297,24 @@ fetch("back.php", {
         identity = data.identity;
     } else {
         set_identity();
+    }
+})
+fetch("back.php", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+        ask_for_theme: true
+    })
+})
+.then(res => res.json())
+.then(data => {
+    if (data.hasOwnProperty("theme")) {
+        const saved_theme = data.theme === true || data.theme === "1";
+        if (saved_theme !== is_black_theme) {
+            toggle_theme();
+        }
     }
 })
 
