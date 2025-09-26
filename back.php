@@ -68,7 +68,7 @@ $db->exec("CREATE TABLE IF NOT EXISTS messages (
     timestamp INTEGER NOT NULL
 )");
 
-if ($_SESSION["identity"] && $message && $password) {
+if (isset($_SESSION["identity"]) && $message && $password) {
     $encrypted = encrypt_message($message, $password);
 
 

@@ -61,7 +61,7 @@
         .text_input {
             all: unset;
             background-color: #d4d4d4;
-            cursor: default;
+            cursor: text;
             padding: 12px;
             width: 64ch;
         }
@@ -316,6 +316,16 @@ fetch("back.php", {
             toggle_theme();
         }
     }
+})
+
+fetch("back.php", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+        identity: identity,
+    })
 })
 
 </script>
